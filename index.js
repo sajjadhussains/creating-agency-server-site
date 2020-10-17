@@ -13,6 +13,7 @@ const app=express();
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('agency'));
+app.use(express.static('review'));
 app.use(fileUpload());
 
 const port=5000;
@@ -22,8 +23,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: 
 client.connect(err => {
   const serviceCollection = client.db("creatingAgency").collection("service");
   const allServiceCollection = client.db("creatingAgency").collection("allService");
-  const reviewCollection = client.db("creatingAgency").collection("allReview");
-  console.log('database conected');  
+  const reviewCollection=client.db("creatingAgency").collection("allReview");
 
   app.post('/addService',(req,res)=>{
       const service=req.body;
@@ -58,8 +58,6 @@ client.connect(err => {
           res.send(result.insertedCount>0)
         })
       })
-    // })
-  })
 
   app.get('/newService',(req,res)=>{
     allServiceCollection.find({})
@@ -81,7 +79,7 @@ client.connect(err => {
           size:file.size,
          img:Buffer.from(encImg,'base64')
         }
-      reviewCollection.insertOne({name,company,description,image})
+        reviewCollection.insertOne({name,company,description,image})
       .then(result=>{
           res.send(result.insertedCount>0)
         })
@@ -94,8 +92,8 @@ client.connect(err => {
     .toArray((err,reviewDocuments)=>{
       res.send(reviewDocuments);
     })
-});
-
+})
+})
 
 
 
